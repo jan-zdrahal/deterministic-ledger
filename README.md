@@ -1,47 +1,121 @@
 # Deterministic Ledger
 
-The Deterministic Ledger is an append-only public log of declared structural events.
+**Document Type:** System Description  
+**Status:** Active  
 
-It records artifact declarations and state transitions within the deterministic stack environment.
+---
+
+## Scope
+
+This document describes the Deterministic Ledger as an append-only public log of declared structural events.
+
+It defines its purpose, operational model, and data characteristics within the stack environment.
 
 ## Function
 
 The ledger provides:
 
-- Chronological ordering of declared entries.
-- Deterministic hash references.
-- Explicit UTC timestamp context.
-- Explicit linkage to external manifest anchors when applicable.
+- Chronological ordering of declared entries  
+- Deterministic hash references (when present)  
+- Explicit UTC timestamp context  
+- Compatibility with DNS-based snapshot anchoring (external)
 
 The ledger does not:
 
-- Define stack architecture.
-- Disclose domain construction mechanisms.
-- Provide authorship certification.
-- Provide legal validation.
-- Act as a cryptographic authority.
+- Define stack architecture  
+- Disclose domain construction mechanisms  
+- Provide authorship certification  
+- Provide legal validation  
+- Act as a cryptographic authority  
 
 ## Operational Model
 
-- Entries are append-only.
-- Existing records are never modified.
-- Corrections are recorded as new entries.
-- Repository state may be cryptographically anchored via deterministic snapshot hashing when explicitly declared.
+- Entries are append-only  
+- Existing records are never modified  
+- Corrections are recorded as new entries  
+- Repository state may be referenced via snapshot hashing  
+
+## Snapshot Hash
+
+A snapshot hash is a SHA3-256 hash of a repository snapshot at a specific commit.
+
+Snapshot hashes are derived from committed repository states only.
+
+Computation:
+
+- the repository state is committed  
+- a snapshot of the committed state is produced (e.g., via `git archive HEAD`)  
+- a SHA3-256 hash is computed over the snapshot  
+
+The resulting hash represents the repository state at that commit.
+
+Snapshot hashes are reproducible when computed using the same process and environment.
+
+No cross-environment reproducibility guarantees are defined.
+
+## Canonical Hash Embedding
+
+After a snapshot hash is computed, it is written into a canonical file (e.g., `CANONICAL_HASH.txt`) and committed.
+
+A new snapshot hash is then computed from the updated repository state.
+
+The published snapshot hash therefore corresponds to a repository state that already includes a previously computed snapshot hash.
+
+## DNS Anchor
+
+DNS is used as an external publication anchor for snapshot hashes.
+
+A DNS anchor consists of:
+
+- a DNS record name associated with a ledger entry  
+- a DNS record value containing a SHA3-256 snapshot hash  
+- a hash derived from a committed repository state after the canonical hash file has been committed  
+
+Example:
+
+_dledger-dl-0001.zdrahal.eu  
+sha3-256=66cf0b7d998eda3240b9db2e9b113c4686033aa78cd7454c97efcb123de67a51
+
+Properties:
+
+- public visibility  
+- independent publication outside the repository  
+- explicit reference to a committed repository state  
+
+Limitations:
+
+- DNS does not guarantee immutability  
+- DNS does not provide cryptographic timestamping  
+- DNS does not act as a trust authority  
+
+## Ordering
+
+The sequence is:
+
+- a ledger record file is created  
+- the record file is committed  
+- a snapshot hash of the committed repository state is computed  
+- the hash is written into the canonical hash file  
+- the canonical hash file is committed  
+- a new snapshot hash is computed from the updated repository state  
+- the resulting hash is published via DNS  
+
+DNS publication therefore always refers to a committed repository state that already includes the relevant ledger record and canonical hash file.
 
 ## Recorded Fields
 
-Each entry contains:
+Entries are lightweight and may vary in structure.
 
-- Entry-ID
-- UTC timestamp (ISO 8601)
-- Artifact identifier
-- Origin classification (e.g., NEW, ARCHIVAL, DERIVED, IMPORT)
-- Entry type
-- Canonical hash reference (when applicable)
-- Optional manifest anchor reference
+Typical fields include:
 
-No interpretative commentary is included.
+- Entry-ID  
+- UTC timestamp (ISO 8601)  
+- Artifact identifier  
+- Origin classification (e.g., NEW, ARCHIVAL, DERIVED, IMPORT)  
+- Type classification (e.g., Entry-Type, Release-Type)  
+- Hash reference (e.g., Snapshot-SHA3-256, Canonical-SHA3-256)  
+- Optional descriptive fields  
 
-## Status
+Field names and presence are not strictly standardized and may vary across entries.
 
-Active
+Entries are primarily structural, but limited descriptive metadata may be included.
