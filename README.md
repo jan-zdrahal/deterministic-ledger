@@ -9,24 +9,31 @@
 
 This document describes the Deterministic Ledger as an append-only public log of declared structural events.
 
-It defines its purpose, operational model, and data characteristics within the stack environment.
+The ledger defines a lightweight mechanism for recording ordered entries referencing repository states and associated artifacts.
+
+The ledger is independent of any specific architectural framework or specification.
+
+It defines its purpose, operational model, and data characteristics within a repository-based publication environment.
 
 ## Function
 
+The ledger provides an append-only trace layer over repository states and associated artifacts.
+
 The ledger provides:
 
-- Chronological ordering of declared entries  
-- Deterministic hash references (when present)  
-- Explicit UTC timestamp context  
-- Compatibility with DNS-based snapshot anchoring (external)
+- chronological ordering of declared entries  
+- deterministic hash references to repository snapshots (when present)  
+- explicit UTC timestamp context  
+- compatibility with external anchoring mechanisms such as DNS publication  
 
 The ledger does not:
 
-- Define stack architecture  
-- Disclose domain construction mechanisms  
-- Provide authorship certification  
-- Provide legal validation  
-- Act as a cryptographic authority  
+- define architectural models  
+- define system semantics  
+- define execution semantics  
+- provide authorship certification  
+- provide legal validation  
+- act as a cryptographic authority     
 
 ## Operational Model
 
@@ -37,7 +44,7 @@ The ledger does not:
 
 ## Snapshot Hash
 
-A snapshot hash is a SHA-256 hash of a repository snapshot at a specific commit.
+A snapshot hash is a SHA-256 hash computed over a repository snapshot at a specific commit.
 
 Snapshot hashes are derived from committed repository states only.
 
@@ -115,7 +122,7 @@ Typical fields include:
 - Artifact identifier  
 - Origin classification (e.g., NEW, ARCHIVAL, DERIVED, IMPORT)  
 - Type classification (e.g., Entry-Type, Release-Type)  
-- Hash reference (e.g., Snapshot-SHA3-256, Canonical-SHA3-256)  
+- Hash reference (e.g., Snapshot-SHA-256, Canonical-SHA-256)  
 - Optional descriptive fields  
 
 Field names and presence are not strictly standardized and may vary across entries.
