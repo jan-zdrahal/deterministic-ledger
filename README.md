@@ -37,7 +37,7 @@ The ledger does not:
 
 ## Snapshot Hash
 
-A snapshot hash is a SHA3-256 hash of a repository snapshot at a specific commit.
+A snapshot hash is a SHA-256 hash of a repository snapshot at a specific commit.
 
 Snapshot hashes are derived from committed repository states only.
 
@@ -45,7 +45,7 @@ Computation:
 
 - the repository state is committed  
 - a snapshot of the committed state is produced (e.g., via `git archive HEAD`)  
-- a SHA3-256 hash is computed over the snapshot  
+- a SHA-256 hash is computed over the snapshot  
 
 The resulting hash represents the repository state at that commit.
 
@@ -68,13 +68,15 @@ DNS is used as an external publication anchor for snapshot hashes.
 A DNS anchor consists of:
 
 - a DNS record name associated with a ledger entry  
-- a DNS record value containing a SHA3-256 snapshot hash  
-- a hash derived from a committed repository state after the canonical hash file has been committed  
+- a DNS record value containing a SHA-256 snapshot hash  
+- a hash derived from a committed repository state after the canonical hash file has been committed
+
+The hash algorithm identifier is part of the published value and MUST be explicitly declared.
 
 Example:
 
 _dledger-dl-0001.zdrahal.eu  
-sha3-256=66cf0b7d998eda3240b9db2e9b113c4686033aa78cd7454c97efcb123de67a51
+sha256=66cf0b7d998eda3240b9db2e9b113c4686033aa78cd7454c97efcb123de67a51
 
 Properties:
 
